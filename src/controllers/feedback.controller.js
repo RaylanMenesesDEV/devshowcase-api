@@ -1,5 +1,8 @@
 import { feedbackService } from "../services/feedbacks.service.js";
-import { validateFeedback } from "../dtos/feedback.dto.js";
+import {
+  validateFeedback,
+  feedbackResponseDTO,
+} from "../dtos/feedback.dto.js";
 
 export const feedbackController = {
   async getAll(req, res) {
@@ -76,8 +79,7 @@ export const feedbackController = {
       }
 
       const feedback = await feedbackService.createFeedback(req.body);
-
-      return res.status(201).json(feedback);
+return res.status(201).json(feedbackResponseDTO(feedback));
     } catch (error) {
       return res.status(500).json({
         message: "Erro ao criar o feedback",
@@ -105,12 +107,12 @@ export const feedbackController = {
         });
       }
 
-      const feedback = await feedbackService.updateFeedback(
-        id,
-        req.body
-      );
+    const feedback = await feedbackService.updateFeedback(
+  id,
+  req.body
+);
 
-      return res.status(200).json(feedback);
+return res.status(200).json(feedbackResponseDTO(feedback));
     } catch (error) {
       if (error.message === "Feedback não encontrado") {
         return res.status(404).json({

@@ -11,3 +11,10 @@ export function validateTechnology(data) {
 
   return errors;
 }
+export function technologyResponseDTO(technology) {
+  return {
+    id: technology.id,
+    name: technology.name,
+    createdAt: technology.createdAt,
+  };
+}

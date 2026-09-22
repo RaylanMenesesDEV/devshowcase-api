@@ -31,3 +31,15 @@ export function validateProject(data) {
 
   return errors;
 }
+export function projectResponseDTO(project) {
+  return {
+    id: project.id,
+    title: project.title,
+    description: project.description,
+    projectUrl: project.projectUrl,
+    imageUrl: project.imageUrl,
+    profileId: project.profileId,
+    createdAt: project.createdAt,
+    updatedAt: project.updatedAt,
+  };
+}

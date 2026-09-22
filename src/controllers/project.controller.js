@@ -1,5 +1,8 @@
 import { projectService } from "../services/projects.service.js";
-import { validateProject } from "../dtos/project.dto.js";
+import {
+  validateProject,
+  projectResponseDTO,
+} from "../dtos/project.dto.js";
 
 export const projectController = {
   async getAll(req, res) {
@@ -54,8 +57,7 @@ export const projectController = {
       }
 
       const project = await projectService.createProject(req.body);
-
-      return res.status(201).json(project);
+return res.status(201).json(projectResponseDTO(project));
     } catch (error) {
       return res.status(500).json({
         message: "Erro ao criar o projeto",
@@ -84,8 +86,7 @@ export const projectController = {
       }
 
       const project = await projectService.updateProject(id, req.body);
-
-      return res.status(200).json(project);
+return res.status(200).json(projectResponseDTO(project));
     } catch (error) {
       if (error.message === "Projeto não encontrado") {
         return res.status(404).json({

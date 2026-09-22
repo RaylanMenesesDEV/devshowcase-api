@@ -1,5 +1,8 @@
 import { technologyService } from "../services/technologies.service.js";
-import { validateTechnology } from "../dtos/technology.dto.js";
+import {
+  validateTechnology,
+  technologyResponseDTO,
+} from "../dtos/technology.dto.js";
 
 export const technologyController = {
   async getAll(req, res) {
@@ -54,8 +57,7 @@ export const technologyController = {
       }
 
       const technology = await technologyService.createTechnology(req.body);
-
-      return res.status(201).json(technology);
+return res.status(201).json(technologyResponseDTO(technology));
     } catch (error) {
       return res.status(500).json({
         message: "Erro ao criar a tecnologia",
@@ -88,7 +90,7 @@ export const technologyController = {
         req.body
       );
 
-      return res.status(200).json(technology);
+     return res.status(200).json(technologyResponseDTO(technology));
     } catch (error) {
       if (error.message === "Tecnologia não encontrada") {
         return res.status(404).json({

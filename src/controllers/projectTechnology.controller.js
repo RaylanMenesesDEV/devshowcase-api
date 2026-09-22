@@ -1,4 +1,5 @@
 import { projectTechnologyService } from "../services/projectTechnology.service.js";
+import { projectTechnologyResponseDTO } from "../dtos/projectTechnology.dto.js";
 
 export const projectTechnologyController = {
   async getAll(req, res) {
@@ -37,30 +38,32 @@ export const projectTechnologyController = {
   },
 
   async create(req, res) {
-    try {
-      const projectId = Number(req.body.projectId);
-      const technologyId = Number(req.body.technologyId);
+  try {
+    const projectId = Number(req.body.projectId);
+    const technologyId = Number(req.body.technologyId);
 
-      if (Number.isNaN(projectId) || Number.isNaN(technologyId)) {
-        return res.status(400).json({
-          message: "projectId e technologyId devem ser números válidos",
-        });
-      }
-
-      const relationship =
-        await projectTechnologyService.addTechnologyToProject(
-          projectId,
-          technologyId
-        );
-
-      return res.status(201).json(relationship);
-    } catch (error) {
-      return res.status(500).json({
-        message: "Erro ao adicionar tecnologia ao projeto",
-        error: error.message,
+    if (Number.isNaN(projectId) || Number.isNaN(technologyId)) {
+      return res.status(400).json({
+        message: "projectId e technologyId devem ser números válidos",
       });
     }
-  },
+
+    const relationship =
+      await projectTechnologyService.addTechnologyToProject(
+        projectId,
+        technologyId
+      );
+
+    return res
+      .status(201)
+      .json(projectTechnologyResponseDTO(relationship));
+  } catch (error) {
+    return res.status(500).json({
+      message: "Erro ao adicionar tecnologia ao projeto",
+      error: error.message,
+    });
+  }
+},
 
   async delete(req, res) {
     try {

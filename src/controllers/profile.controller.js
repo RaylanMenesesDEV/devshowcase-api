@@ -1,5 +1,8 @@
 import { profileService } from "../services/profiles.service.js";
-import { validateProfile } from "../dtos/profile.dto.js";
+import {
+  validateProfile,
+  profileResponseDTO,
+} from "../dtos/profile.dto.js";
 
 export const profileController = {
   async getAll(req, res) {
@@ -54,8 +57,7 @@ export const profileController = {
       }
 
       const profile = await profileService.createProfile(req.body);
-
-      return res.status(201).json(profile);
+return res.status(201).json(profileResponseDTO(profile));
     } catch (error) {
       return res.status(500).json({
         message: "Erro ao criar o perfil",
@@ -84,8 +86,7 @@ export const profileController = {
       }
 
       const profile = await profileService.updateProfile(id, req.body);
-
-      return res.status(200).json(profile);
+return res.status(200).json(profileResponseDTO(profile));
     } catch (error) {
       if (error.message === "Perfil não encontrado") {
         return res.status(404).json({

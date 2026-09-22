@@ -23,3 +23,12 @@ export function validateFeedback(data) {
 
   return errors;
 }
+export function feedbackResponseDTO(feedback) {
+  return {
+    id: feedback.id,
+    author: feedback.author,
+    comment: feedback.comment,
+    projectId: feedback.projectId,
+    createdAt: feedback.createdAt,
+  };
+}

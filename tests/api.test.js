@@ -899,3 +899,29 @@ test("GET /api/feedbacks/:id deve retornar 404 para feedback inexistente", async
     server.close();
   }
 });
+test("POST /api/profiles deve rejeitar URL inválida", async () => {
+  const server = app.listen(0);
+
+  try {
+    const response = await fetch(
+      `http://localhost:${server.address().port}/api/profiles`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: "Perfil URL Inválida",
+          githubUrl: "abc",
+        }),
+      }
+    );
+
+    const data = await response.json();
+
+    assert.strictEqual(response.status, 400);
+    assert.ok(data.errors);
+  } finally {
+    server.close();
+  }
+});
