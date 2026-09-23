@@ -78,6 +78,7 @@ return res.status(201).json(projectResponseDTO(project));
 
       const errors = validateProject(req.body);
 
+
       if (errors.length > 0) {
         return res.status(400).json({
           message: "Dados inválidos",

@@ -25,12 +25,31 @@ export function validateProject(data) {
     errors.push("A URL da imagem deve ser um texto.");
   }
 
+  // Validação da URL do projeto
+  if (data.projectUrl && typeof data.projectUrl === "string") {
+    try {
+      new URL(data.projectUrl);
+    } catch {
+      errors.push("A URL do projeto deve ser válida.");
+    }
+  }
+
+  // Validação da URL da imagem
+  if (data.imageUrl && typeof data.imageUrl === "string") {
+    try {
+      new URL(data.imageUrl);
+    } catch {
+      errors.push("A URL da imagem deve ser válida.");
+    }
+  }
+
   if (!data.profileId || !Number.isInteger(Number(data.profileId))) {
     errors.push("O profileId é obrigatório e deve ser um número inteiro.");
   }
 
   return errors;
 }
+
 export function projectResponseDTO(project) {
   return {
     id: project.id,
