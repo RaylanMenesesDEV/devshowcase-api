@@ -157,7 +157,7 @@ DELETE /api/feedbacks/:id
 ### 1. Clonar o projeto
 
 ```bash
-git clone URL_DO_REPOSITORIO
+git clone https://github.com/RaylanMenesesDEV/devshowcase-api.git
 ```
 
 ### 2. Entrar na pasta
