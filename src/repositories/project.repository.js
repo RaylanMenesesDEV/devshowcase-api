@@ -1,8 +1,29 @@
 import prisma from "../lib/prisma.js";
 
 export const projectRepository = {
-  async findAll() {
-    return prisma.project.findMany({
+  async findAll({ technology, page = 1, limit = 10 } = {}) {
+  const skip = (page - 1) * limit;
+
+  const where = technology
+    ? {
+        technologies: {
+          some: {
+            technology: {
+              name: {
+                contains: technology,
+                mode: "insensitive",
+              },
+            },
+          },
+        },
+      }
+    : {};
+
+  const [projects, total] = await Promise.all([
+    prisma.project.findMany({
+      where,
+      skip,
+      take: limit,
       include: {
         profile: true,
         technologies: {
@@ -12,8 +33,24 @@ export const projectRepository = {
         },
         feedbacks: true,
       },
-    });
-  },
+      orderBy: {
+        id: "desc",
+      },
+    }),
+
+    prisma.project.count({
+      where,
+    }),
+  ]);
+
+  return {
+    projects,
+    total,
+    page,
+    limit,
+    totalPages: Math.ceil(total / limit),
+  };
+},
 
   async findById(id) {
     return prisma.project.findUnique({
@@ -46,6 +83,30 @@ export const projectRepository = {
       data,
     });
   },
+
+async updateAverageRating(id, averageRating) {
+  return prisma.project.update({
+    where: {
+      id,
+    },
+    data: {
+      averageRating,
+    },
+  });
+},
+
+async incrementUpvotes(id) {
+  return prisma.project.update({
+    where: {
+      id,
+    },
+    data: {
+      upvotes: {
+        increment: 1,
+      },
+    },
+  });
+},
 
   async delete(id) {
     return prisma.project.delete({

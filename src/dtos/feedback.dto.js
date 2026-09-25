@@ -21,6 +21,17 @@ export function validateFeedback(data) {
     errors.push("O projectId é obrigatório e deve ser um número inteiro.");
   }
 
+  if (
+  data.rating !== undefined &&
+  (
+    !Number.isInteger(Number(data.rating)) ||
+    Number(data.rating) < 1 ||
+    Number(data.rating) > 5
+  )
+) {
+  errors.push("A nota deve ser um número inteiro entre 1 e 5.");
+}
+
   return errors;
 }
 export function feedbackResponseDTO(feedback) {
@@ -28,6 +39,7 @@ export function feedbackResponseDTO(feedback) {
     id: feedback.id,
     author: feedback.author,
     comment: feedback.comment,
+    rating: feedback.rating,
     projectId: feedback.projectId,
     createdAt: feedback.createdAt,
   };

@@ -1,0 +1,418 @@
+openapi: 3.0.0
+
+info:
+  title: DevShowcase API
+  version: 1.0.0
+  description: API para gerenciamento de portfólio, projetos, tecnologias e feedbacks.
+
+servers:
+  - url: http://localhost:3000
+    description: Servidor local
+
+tags:
+  - name: Profiles
+    description: Operações relacionadas aos perfis
+  - name: Projects
+    description: Operações relacionadas aos projetos
+  - name: Technologies
+    description: Operações relacionadas às tecnologias
+  - name: Feedbacks
+    description: Operações relacionadas aos feedbacks
+
+paths:
+
+  /api/profiles:
+    get:
+      tags:
+        - Profiles
+      summary: Listar todos os perfis
+      responses:
+        "200":
+          description: Lista de perfis
+
+    post:
+      tags:
+        - Profiles
+      summary: Criar um novo perfil
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProfileInput"
+      responses:
+        "201":
+          description: Perfil criado
+        "400":
+          description: Dados inválidos
+
+  /api/profiles/{id}:
+    get:
+      tags:
+        - Profiles
+      summary: Buscar perfil por ID
+      parameters:
+        - $ref: "#/components/parameters/Id"
+      responses:
+        "200":
+          description: Perfil encontrado
+        "404":
+          description: Perfil não encontrado
+
+    put:
+      tags:
+        - Profiles
+      summary: Atualizar perfil
+      parameters:
+        - $ref: "#/components/parameters/Id"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProfileInput"
+      responses:
+        "200":
+          description: Perfil atualizado
+        "400":
+          description: Dados inválidos
+        "404":
+          description: Perfil não encontrado
+
+    delete:
+      tags:
+        - Profiles
+      summary: Excluir perfil
+      parameters:
+        - $ref: "#/components/parameters/Id"
+      responses:
+        "204":
+          description: Perfil excluído
+        "404":
+          description: Perfil não encontrado
+
+  /api/projects:
+    get:
+      tags:
+        - Projects
+      summary: Listar projetos
+      parameters:
+        - name: technology
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Filtra projetos pelo nome da tecnologia
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 1
+          description: Número da página
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 10
+          description: Quantidade de projetos por página
+      responses:
+        "200":
+          description: Lista paginada de projetos
+
+    post:
+      tags:
+        - Projects
+      summary: Criar projeto
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProjectInput"
+      responses:
+        "201":
+          description: Projeto criado
+        "400":
+          description: Dados inválidos
+
+  /api/projects/{id}:
+    get:
+      tags:
+        - Projects
+      summary: Buscar projeto por ID
+      parameters:
+        - $ref: "#/components/parameters/Id"
+      responses:
+        "200":
+          description: Projeto encontrado
+        "404":
+          description: Projeto não encontrado
+
+    put:
+      tags:
+        - Projects
+      summary: Atualizar projeto
+      parameters:
+        - $ref: "#/components/parameters/Id"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProjectInput"
+      responses:
+        "200":
+          description: Projeto atualizado
+        "404":
+          description: Projeto não encontrado
+
+    delete:
+      tags:
+        - Projects
+      summary: Excluir projeto
+      parameters:
+        - $ref: "#/components/parameters/Id"
+      responses:
+        "204":
+          description: Projeto excluído
+        "404":
+          description: Projeto não encontrado
+
+  /api/projects/{id}/feedbacks:
+    post:
+      tags:
+        - Projects
+      summary: Avaliar um projeto
+      parameters:
+        - $ref: "#/components/parameters/Id"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProjectFeedbackInput"
+      responses:
+        "201":
+          description: Avaliação criada
+        "400":
+          description: Dados inválidos
+        "404":
+          description: Projeto não encontrado
+
+  /api/projects/{id}/upvote:
+    put:
+      tags:
+        - Projects
+      summary: Adicionar upvote ao projeto
+      parameters:
+        - $ref: "#/components/parameters/Id"
+      responses:
+        "200":
+          description: Upvote registrado
+        "404":
+          description: Projeto não encontrado
+
+  /api/technologies:
+    get:
+      tags:
+        - Technologies
+      summary: Listar tecnologias
+      responses:
+        "200":
+          description: Lista de tecnologias
+
+    post:
+      tags:
+        - Technologies
+      summary: Criar tecnologia
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TechnologyInput"
+      responses:
+        "201":
+          description: Tecnologia criada
+
+  /api/technologies/{id}:
+    get:
+      tags:
+        - Technologies
+      summary: Buscar tecnologia por ID
+      parameters:
+        - $ref: "#/components/parameters/Id"
+      responses:
+        "200":
+          description: Tecnologia encontrada
+        "404":
+          description: Tecnologia não encontrada
+
+  /api/feedbacks:
+    get:
+      tags:
+        - Feedbacks
+      summary: Listar feedbacks
+      responses:
+        "200":
+          description: Lista de feedbacks
+
+    post:
+      tags:
+        - Feedbacks
+      summary: Criar feedback
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FeedbackInput"
+      responses:
+        "201":
+          description: Feedback criado
+
+  /api/feedbacks/{id}:
+    get:
+      tags:
+        - Feedbacks
+      summary: Buscar feedback por ID
+      parameters:
+        - $ref: "#/components/parameters/Id"
+      responses:
+        "200":
+          description: Feedback encontrado
+        "404":
+          description: Feedback não encontrado
+
+    put:
+      tags:
+        - Feedbacks
+      summary: Atualizar feedback
+      parameters:
+        - $ref: "#/components/parameters/Id"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FeedbackInput"
+      responses:
+        "200":
+          description: Feedback atualizado
+
+    delete:
+      tags:
+        - Feedbacks
+      summary: Excluir feedback
+      parameters:
+        - $ref: "#/components/parameters/Id"
+      responses:
+        "204":
+          description: Feedback excluído
+
+components:
+
+  parameters:
+    Id:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: integer
+      description: ID do recurso
+
+  schemas:
+
+    ProfileInput:
+      type: object
+      required:
+        - name
+        - bio
+      properties:
+        name:
+          type: string
+          example: Raylan Meneses Ferreira
+        bio:
+          type: string
+          example: Professor e desenvolvedor de sistemas
+        githubUrl:
+          type: string
+          example: https://github.com/exemplo
+        linkedinUrl:
+          type: string
+          example: https://linkedin.com/in/exemplo
+
+    ProjectInput:
+      type: object
+      required:
+        - title
+        - description
+        - profileId
+      properties:
+        title:
+          type: string
+          example: Portfólio Pessoal
+        description:
+          type: string
+          example: Projeto desenvolvido para apresentar meus trabalhos.
+        projectUrl:
+          type: string
+          example: https://github.com/exemplo/projeto
+        imageUrl:
+          type: string
+          example: https://exemplo.com/imagem.jpg
+        profileId:
+          type: integer
+          example: 1
+
+    TechnologyInput:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          example: JavaScript
+
+    FeedbackInput:
+      type: object
+      required:
+        - author
+        - comment
+        - projectId
+      properties:
+        author:
+          type: string
+          example: Maria
+        comment:
+          type: string
+          example: Excelente projeto!
+        rating:
+          type: integer
+          minimum: 1
+          maximum: 5
+          example: 5
+        projectId:
+          type: integer
+          example: 1
+
+    ProjectFeedbackInput:
+      type: object
+      required:
+        - author
+        - comment
+        - rating
+      properties:
+        author:
+          type: string
+          example: Maria
+        comment:
+          type: string
+          example: Excelente projeto!
+        rating:
+          type: integer
+          minimum: 1
+          maximum: 5
+          example: 5

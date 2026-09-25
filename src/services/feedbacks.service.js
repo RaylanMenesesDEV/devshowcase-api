@@ -1,4 +1,5 @@
 import { feedbackRepository } from "../repositories/feedback.repository.js";
+import { projectRepository } from "../repositories/project.repository.js";
 
 export const feedbackService = {
   async getAllFeedbacks() {
@@ -20,8 +21,23 @@ export const feedbackService = {
   },
 
   async createFeedback(data) {
-    return feedbackRepository.create(data);
-  },
+  const feedback = await feedbackRepository.create(data);
+
+  const averageRating =
+    await feedbackRepository.getAverageRatingByProjectId(
+      Number(data.projectId)
+    );
+
+  await projectRepository.updateAverageRating(
+    Number(data.projectId),
+    averageRating
+  );
+
+  return {
+    ...feedback,
+    averageRating,
+  };
+},
 
   async updateFeedback(id, data) {
     await this.getFeedbackById(id);

@@ -52,6 +52,22 @@ export const feedbackRepository = {
     });
   },
 
+    async getAverageRatingByProjectId(projectId) {
+    const result = await prisma.feedback.aggregate({
+      where: {
+        projectId,
+        rating: {
+          not: null,
+        },
+      },
+      _avg: {
+        rating: true,
+      },
+    });
+
+    return result._avg.rating ?? 0;
+  },
+
   async delete(id) {
     return prisma.feedback.delete({
       where: {

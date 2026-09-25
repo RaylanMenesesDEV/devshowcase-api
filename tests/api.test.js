@@ -1,5 +1,6 @@
 import test from "node:test";
 import assert from "node:assert";
+
 import app from "../src/app.js";
 
 test("GET / deve retornar a mensagem da API", async () => {
@@ -18,6 +19,7 @@ test("GET / deve retornar a mensagem da API", async () => {
     server.close();
   }
 });
+
 test("GET /api/profiles deve retornar uma lista de perfis", async () => {
   const server = app.listen(0);
 
@@ -34,6 +36,7 @@ test("GET /api/profiles deve retornar uma lista de perfis", async () => {
     server.close();
   }
 });
+
 test("POST /api/profiles deve criar um novo perfil", async () => {
   const server = app.listen(0);
 
@@ -63,6 +66,7 @@ test("POST /api/profiles deve criar um novo perfil", async () => {
     server.close();
   }
 });
+
 test("GET /api/profiles/:id deve retornar um perfil específico", async () => {
   const server = app.listen(0);
 
@@ -98,6 +102,7 @@ test("GET /api/profiles/:id deve retornar um perfil específico", async () => {
     server.close();
   }
 });
+
 test("PUT /api/profiles/:id deve atualizar um perfil", async () => {
   const server = app.listen(0);
 
@@ -142,6 +147,7 @@ test("PUT /api/profiles/:id deve atualizar um perfil", async () => {
     server.close();
   }
 });
+
 test("DELETE /api/profiles/:id deve excluir um perfil", async () => {
   const server = app.listen(0);
 
@@ -180,6 +186,7 @@ test("DELETE /api/profiles/:id deve excluir um perfil", async () => {
     server.close();
   }
 });
+
 test("GET /api/projects deve retornar uma lista de projetos", async () => {
   const server = app.listen(0);
 
@@ -191,11 +198,16 @@ test("GET /api/projects deve retornar uma lista de projetos", async () => {
     const data = await response.json();
 
     assert.strictEqual(response.status, 200);
-    assert.ok(Array.isArray(data));
+    assert.ok(Array.isArray(data.projects));
+    assert.strictEqual(typeof data.total, "number");
+    assert.strictEqual(typeof data.page, "number");
+    assert.strictEqual(typeof data.limit, "number");
+    assert.strictEqual(typeof data.totalPages, "number");
   } finally {
     server.close();
   }
 });
+
 test("POST /api/projects deve criar um novo projeto", async () => {
   const server = app.listen(0);
 
@@ -227,6 +239,7 @@ test("POST /api/projects deve criar um novo projeto", async () => {
     server.close();
   }
 });
+
 test("GET /api/projects/:id deve retornar um projeto específico", async () => {
   const server = app.listen(0);
 
@@ -245,6 +258,7 @@ test("GET /api/projects/:id deve retornar um projeto específico", async () => {
     server.close();
   }
 });
+
 test("PUT /api/projects/:id deve atualizar um projeto", async () => {
   const server = app.listen(0);
 
@@ -296,6 +310,7 @@ test("PUT /api/projects/:id deve atualizar um projeto", async () => {
     server.close();
   }
 });
+
 test("DELETE /api/projects/:id deve excluir um projeto", async () => {
   const server = app.listen(0);
 
@@ -335,6 +350,7 @@ test("DELETE /api/projects/:id deve excluir um projeto", async () => {
     server.close();
   }
 });
+
 test("GET /api/technologies deve retornar uma lista de tecnologias", async () => {
   const server = app.listen(0);
 
@@ -351,6 +367,7 @@ test("GET /api/technologies deve retornar uma lista de tecnologias", async () =>
     server.close();
   }
 });
+
 test("POST /api/technologies deve criar uma nova tecnologia", async () => {
   const server = app.listen(0);
 
@@ -379,6 +396,7 @@ test("POST /api/technologies deve criar uma nova tecnologia", async () => {
     server.close();
   }
 });
+
 test("GET /api/technologies/:id deve retornar uma tecnologia específica", async () => {
   const server = app.listen(0);
 
@@ -416,6 +434,7 @@ test("GET /api/technologies/:id deve retornar uma tecnologia específica", async
     server.close();
   }
 });
+
 test("POST /api/project-technologies deve associar uma tecnologia a um projeto", async () => {
   const server = app.listen(0);
 
@@ -481,6 +500,7 @@ test("POST /api/project-technologies deve associar uma tecnologia a um projeto",
     server.close();
   }
 });
+
 test("GET /api/project-technologies/project/:projectId deve retornar as tecnologias do projeto", async () => {
   const server = app.listen(0);
 
@@ -489,13 +509,13 @@ test("GET /api/project-technologies/project/:projectId deve retornar as tecnolog
       `http://localhost:${server.address().port}/api/projects`
     );
 
-    const projects = await projectResponse.json();
+    const projectsData = await projectResponse.json();
 
     assert.strictEqual(projectResponse.status, 200);
-    assert.ok(Array.isArray(projects));
-    assert.ok(projects.length > 0);
+    assert.ok(Array.isArray(projectsData.projects));
+    assert.ok(projectsData.projects.length > 0);
 
-    const projectId = projects[0].id;
+    const projectId = projectsData.projects[0].id;
 
     const response = await fetch(
       `http://localhost:${server.address().port}/api/project-technologies/project/${projectId}`
@@ -509,6 +529,7 @@ test("GET /api/project-technologies/project/:projectId deve retornar as tecnolog
     server.close();
   }
 });
+
 test("GET /api/feedbacks deve retornar uma lista de feedbacks", async () => {
   const server = app.listen(0);
 
@@ -525,45 +546,7 @@ test("GET /api/feedbacks deve retornar uma lista de feedbacks", async () => {
     server.close();
   }
 });
-test("POST /api/feedbacks deve criar um novo feedback", async () => {
-  const server = app.listen(0);
 
-  try {
-    const projectsResponse = await fetch(
-      `http://localhost:${server.address().port}/api/projects`
-    );
-
-    const projects = await projectsResponse.json();
-
-    assert.strictEqual(projectsResponse.status, 200);
-    assert.ok(projects.length > 0);
-
-    const projectId = projects[0].id;
-
-    const response = await fetch(
-      `http://localhost:${server.address().port}/api/feedbacks`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          author: `Autor Teste ${Date.now()}`,
-          comment: "Este é um feedback criado durante o teste.",
-          projectId,
-        }),
-      }
-    );
-
-    const data = await response.json();
-
-    assert.strictEqual(response.status, 201);
-    assert.ok(data.id);
-    assert.strictEqual(data.projectId, projectId);
-  } finally {
-    server.close();
-  }
-});
 test("GET /api/feedbacks/:id deve retornar um feedback específico", async () => {
   const server = app.listen(0);
 
@@ -572,12 +555,13 @@ test("GET /api/feedbacks/:id deve retornar um feedback específico", async () =>
       `http://localhost:${server.address().port}/api/projects`
     );
 
-    const projects = await projectsResponse.json();
+    const projectsData = await projectsResponse.json();
 
     assert.strictEqual(projectsResponse.status, 200);
-    assert.ok(projects.length > 0);
+    assert.ok(Array.isArray(projectsData.projects));
+    assert.ok(projectsData.projects.length > 0);
 
-    const projectId = projects[0].id;
+    const projectId = projectsData.projects[0].id;
 
     const createResponse = await fetch(
       `http://localhost:${server.address().port}/api/feedbacks`,
@@ -612,6 +596,7 @@ test("GET /api/feedbacks/:id deve retornar um feedback específico", async () =>
     server.close();
   }
 });
+
 test("PUT /api/feedbacks/:id deve atualizar um feedback", async () => {
   const server = app.listen(0);
 
@@ -620,12 +605,13 @@ test("PUT /api/feedbacks/:id deve atualizar um feedback", async () => {
       `http://localhost:${server.address().port}/api/projects`
     );
 
-    const projects = await projectsResponse.json();
+    const projectsData = await projectsResponse.json();
 
     assert.strictEqual(projectsResponse.status, 200);
-    assert.ok(projects.length > 0);
+    assert.ok(Array.isArray(projectsData.projects));
+    assert.ok(projectsData.projects.length > 0);
 
-    const projectId = projects[0].id;
+    const projectId = projectsData.projects[0].id;
 
     const createResponse = await fetch(
       `http://localhost:${server.address().port}/api/feedbacks`,
@@ -681,12 +667,13 @@ test("DELETE /api/feedbacks/:id deve excluir um feedback", async () => {
       `http://localhost:${server.address().port}/api/projects`
     );
 
-    const projects = await projectsResponse.json();
+    const projectsData = await projectsResponse.json();
 
     assert.strictEqual(projectsResponse.status, 200);
-    assert.ok(projects.length > 0);
+    assert.ok(Array.isArray(projectsData.projects));
+    assert.ok(projectsData.projects.length > 0);
 
-    const projectId = projects[0].id;
+    const projectId = projectsData.projects[0].id;
 
     const createResponse = await fetch(
       `http://localhost:${server.address().port}/api/feedbacks`,
@@ -720,6 +707,7 @@ test("DELETE /api/feedbacks/:id deve excluir um feedback", async () => {
     server.close();
   }
 });
+
 test("POST /api/profiles deve rejeitar perfil sem nome", async () => {
   const server = app.listen(0);
 
@@ -745,6 +733,7 @@ test("POST /api/profiles deve rejeitar perfil sem nome", async () => {
     server.close();
   }
 });
+
 test("POST /api/projects deve rejeitar projeto sem título", async () => {
   const server = app.listen(0);
 
@@ -771,6 +760,7 @@ test("POST /api/projects deve rejeitar projeto sem título", async () => {
     server.close();
   }
 });
+
 test("POST /api/technologies deve rejeitar tecnologia sem nome", async () => {
   const server = app.listen(0);
 
@@ -794,6 +784,7 @@ test("POST /api/technologies deve rejeitar tecnologia sem nome", async () => {
     server.close();
   }
 });
+
 test("POST /api/feedbacks deve rejeitar comentário muito curto", async () => {
   const server = app.listen(0);
 
@@ -802,12 +793,13 @@ test("POST /api/feedbacks deve rejeitar comentário muito curto", async () => {
       `http://localhost:${server.address().port}/api/projects`
     );
 
-    const projects = await projectsResponse.json();
+    const projectsData = await projectsResponse.json();
 
     assert.strictEqual(projectsResponse.status, 200);
-    assert.ok(projects.length > 0);
+    assert.ok(Array.isArray(projectsData.projects));
+    assert.ok(projectsData.projects.length > 0);
 
-    const projectId = projects[0].id;
+    const projectId = projectsData.projects[0].id;
 
     const response = await fetch(
       `http://localhost:${server.address().port}/api/feedbacks`,
@@ -832,6 +824,7 @@ test("POST /api/feedbacks deve rejeitar comentário muito curto", async () => {
     server.close();
   }
 });
+
 test("GET /api/profiles/:id deve retornar 404 para perfil inexistente", async () => {
   const server = app.listen(0);
 
@@ -899,6 +892,7 @@ test("GET /api/feedbacks/:id deve retornar 404 para feedback inexistente", async
     server.close();
   }
 });
+
 test("POST /api/profiles deve rejeitar URL inválida", async () => {
   const server = app.listen(0);
 
