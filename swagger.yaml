@@ -9,6 +9,9 @@ servers:
   - url: http://localhost:3000
     description: Servidor local
 
+  - url: https://devshowcase-api-7xcf.onrender.com
+    description: Servidor Render
+
 tags:
   - name: Profiles
     description: Operações relacionadas aos perfis
